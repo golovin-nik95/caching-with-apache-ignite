@@ -1,0 +1,26 @@
+version: '3'
+services:
+  cassandra:
+    image: cassandra
+    container_name: cwai-cassandra
+    ports:
+      - 9042:9042
+    volumes:
+      - ./cassandra:/cassandra
+    command: /bin/sh /cassandra/init.sh
+
+  product-service:
+    container_name: cwai-product-service
+    build:
+      context: ..
+      dockerfile: docker/product-service/Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - cassandra
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      while ! (nc -z cassandra 9042); do sleep 5; echo 'Waiting for cassandra to start-up...'; done;
+      java -jar -Dspring.profiles.active=docker /app.jar
+      "

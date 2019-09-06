@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: product-service
+  data:
+    cassandra:
+      keyspace-name: jcpenney
+      contact-points: localhost
+      port: 9042
+      schema-action: none
