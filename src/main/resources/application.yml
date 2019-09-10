@@ -1,3 +1,7 @@
+cwai:
+  ignite:
+    addresses: localhost:47500
+
 spring:
   application:
     name: product-service

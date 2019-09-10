@@ -1,0 +1,20 @@
+<persistence keyspace="jcpenney" table="products">
+    <keyPersistence class="java.lang.String" strategy="PRIMITIVE" column="uniq_id"/>
+    <valuePersistence class="com.griddynamics.ngolovin.cwai.entities.Product" strategy="POJO"
+                      serializer="org.apache.ignite.cache.store.cassandra.serializer.JavaSerializer">
+        <field name="uniqId" column="uniq_id" index="true" />
+        <field name="sku" />
+        <field name="nameTitle" column="name_title" />
+        <field name="description" />
+        <field name="listPrice" column="list_price" />
+        <field name="salePrice" column="sale_price" />
+        <field name="category" />
+        <field name="categoryTree" column="category_tree" />
+        <field name="averageRating" column="average_rating" />
+        <field name="url" />
+        <field name="imageUrls" column="image_urls" />
+        <field name="brand" />
+        <field name="totalNumberReviews" column="total_number_reviews" />
+        <field name="reviews" />
+    </valuePersistence>
+</persistence>
