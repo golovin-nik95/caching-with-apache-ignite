@@ -32,17 +32,17 @@ public class IgniteConfig {
         KeyValuePersistenceSettings persistenceSettings = new KeyValuePersistenceSettings(cassandraPersistenceSettings);
         cassandraCacheStoreFactory.setPersistenceSettings(persistenceSettings);
 
-        CacheConfiguration<String, Product> productCacheConfig = new CacheConfiguration<>(PRODUCT_CACHE_NAME);
-        productCacheConfig.setReadThrough(true);
-        productCacheConfig.setWriteThrough(true);
-        productCacheConfig.setStatisticsEnabled(true);
-        productCacheConfig.setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(Duration.ONE_MINUTE));
-        productCacheConfig.setCacheStoreFactory(cassandraCacheStoreFactory);
+        CacheConfiguration<String, Product> productCacheConfiguration = new CacheConfiguration<>(PRODUCT_CACHE_NAME);
+        productCacheConfiguration.setReadThrough(true);
+        productCacheConfiguration.setWriteThrough(true);
+        productCacheConfiguration.setStatisticsEnabled(true);
+        productCacheConfiguration.setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(Duration.ONE_MINUTE));
+        productCacheConfiguration.setCacheStoreFactory(cassandraCacheStoreFactory);
 
-        IgniteConfiguration igniteConfig = new IgniteConfiguration();
-        igniteConfig.setCacheConfiguration(productCacheConfig);
+        IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
+        igniteConfiguration.setCacheConfiguration(productCacheConfiguration);
 
-        return Ignition.getOrStart(igniteConfig);
+        return Ignition.start(igniteConfiguration);
     }
 
     @Bean

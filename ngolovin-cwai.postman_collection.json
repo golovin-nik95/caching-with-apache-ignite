@@ -1,0 +1,64 @@
+{
+	"info": {
+		"_postman_id": "36985c3a-f87c-4025-95fc-857617338cdd",
+		"name": "ngolovin/cwai",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getProductByUniqId",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/v1/api/products/b6c0b6bea69c722939585baeac73c13d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"api",
+						"products",
+						"b6c0b6bea69c722939585baeac73c13d"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateProductByUniqId",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"listPrice\": \"42.00\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/api/products/b6c0b6bea69c722939585baeac73c13d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"api",
+						"products",
+						"b6c0b6bea69c722939585baeac73c13d"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
