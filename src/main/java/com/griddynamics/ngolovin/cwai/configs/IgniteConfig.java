@@ -2,31 +2,33 @@ package com.griddynamics.ngolovin.cwai.configs;
 
 import com.griddynamics.ngolovin.cwai.entities.Product;
 import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.store.cassandra.CassandraCacheStoreFactory;
 import org.apache.ignite.cache.store.cassandra.datasource.DataSource;
 import org.apache.ignite.cache.store.cassandra.persistence.KeyValuePersistenceSettings;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.transactions.spring.SpringTransactionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
-import javax.cache.expiry.TouchedExpiryPolicy;
 
 @Configuration
 public class IgniteConfig {
 
-    private static final String PRODUCT_CACHE_NAME = "ProductCache";
+    public static final String PRODUCT_CACHE_NAME = "ProductCache";
 
     @Value("classpath:ignite/cassandra-persistence-settings.xml")
     private Resource cassandraPersistenceSettings;
 
     @Bean
-    public Ignite ignite(DataSource cassandraDataSource) {
+    public IgniteConfiguration igniteConfiguration(DataSource cassandraDataSource) {
         CassandraCacheStoreFactory<String, Product> cassandraCacheStoreFactory = new CassandraCacheStoreFactory<>();
         cassandraCacheStoreFactory.setDataSource(cassandraDataSource);
         KeyValuePersistenceSettings persistenceSettings = new KeyValuePersistenceSettings(cassandraPersistenceSettings);
@@ -36,17 +38,27 @@ public class IgniteConfig {
         productCacheConfiguration.setReadThrough(true);
         productCacheConfiguration.setWriteThrough(true);
         productCacheConfiguration.setStatisticsEnabled(true);
-        productCacheConfiguration.setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(Duration.ONE_MINUTE));
+        productCacheConfiguration.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+        productCacheConfiguration.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(Duration.ONE_MINUTE));
         productCacheConfiguration.setCacheStoreFactory(cassandraCacheStoreFactory);
 
         IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
         igniteConfiguration.setCacheConfiguration(productCacheConfiguration);
+        igniteConfiguration.setIgniteInstanceName(PRODUCT_CACHE_NAME + "-instance");
 
-        return Ignition.start(igniteConfiguration);
+        return igniteConfiguration;
     }
 
     @Bean
-    public IgniteCache<String, Product> productCache(Ignite ignite) {
-        return ignite.cache(PRODUCT_CACHE_NAME);
+    public Ignite igniteInstance() {
+        return Ignition.start(igniteConfiguration(null));
+    }
+
+    @Bean
+    public SpringTransactionManager transactionManager() {
+        SpringTransactionManager transactionManager = new SpringTransactionManager();
+        transactionManager.setIgniteInstanceName(igniteInstance().name());
+
+        return transactionManager;
     }
 }
