@@ -2,6 +2,7 @@ package com.griddynamics.ngolovin.cwai.configs;
 
 import com.griddynamics.ngolovin.cwai.entities.Product;
 import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.store.cassandra.CassandraCacheStoreFactory;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
@@ -60,5 +60,10 @@ public class IgniteConfig {
         transactionManager.setIgniteInstanceName(igniteInstance().name());
 
         return transactionManager;
+    }
+
+    @Bean
+    public IgniteCache<String, Product> productCache(Ignite ignite) {
+        return ignite.cache(PRODUCT_CACHE_NAME);
     }
 }
